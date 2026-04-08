@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Chaki Barber</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold-light:#E8C96A;--black:#080808;--black-mid:#111;--black-card:#161616;--black-border:#222;--text-muted:#777;--text-body:#B8B8B8;--white:#F0EBE0;--red:#E24B4A;--green:#639922;--ff-b:'Outfit',sans-serif}
+body{background:var(--black);color:var(--text-body);font-family:var(--ff-b);font-weight:300;min-height:100vh}
+
+/* LOGIN */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-box{background:var(--black-card);border:1px solid var(--black-border);padding:3rem;width:100%;max-width:400px;text-align:center}
+.login-logo{font-size:2rem;margin-bottom:.5rem}
+.login-title{font-size:1.3rem;color:var(--white);margin-bottom:.3rem;letter-spacing:.05em}
+.login-sub{font-size:.8rem;color:var(--text-muted);margin-bottom:2rem;letter-spacing:.1em;text-transform:uppercase}
+.login-input{width:100%;background:#111;border:1px solid #2a2a2a;color:var(--white);font-size:.9rem;padding:.8rem 1rem;border-radius:2px;outline:none;transition:border-color .2s;margin-bottom:1rem;font-family:var(--ff-b)}
+.login-input:focus{border-color:var(--gold)}
+.login-btn{width:100%;background:var(--gold);color:#000;border:none;font-size:.85rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;padding:1rem;cursor:pointer;border-radius:2px;transition:background .2s;font-family:var(--ff-b)}
+.login-btn:hover{background:var(--gold-light)}
+.login-error{color:var(--red);font-size:.8rem;margin-top:.8rem;display:none}
+
+/* DASHBOARD */
+#dashboard{display:none;padding:2rem 5%}
+.admin-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 5%;background:var(--black-mid);border-bottom:1px solid var(--black-border);margin:0 -5% 2rem;position:sticky;top:0;z-index:100}
+.admin-title{color:var(--gold);font-size:1rem;letter-spacing:.1em;text-transform:uppercase}
+.logout-btn{background:none;border:1px solid var(--black-border);color:var(--text-muted);padding:.4rem 1rem;cursor:pointer;font-size:.75rem;border-radius:2px;transition:all .2s;font-family:var(--ff-b)}
+.logout-btn:hover{border-color:var(--red);color:var(--red)}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--black-border);margin-bottom:2rem}
+.tab{padding:.8rem 1.5rem;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:var(--text-muted);border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--ff-b)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* AGENDA */
+.agenda-controls{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;flex-wrap:wrap}
+.agenda-controls button{background:none;border:1px solid var(--black-border);color:var(--gold);width:32px;height:32px;cursor:pointer;font-size:1rem;border-radius:2px}
+.agenda-month{font-size:1rem;color:var(--white);min-width:160px;text-align:center}
+.agenda-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1.5rem}
+.agenda-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px}
+.agenda-hdr div{text-align:center;font-size:.62rem;color:var(--text-muted);padding:.3rem}
+.aday{text-align:center;padding:.5rem .2rem;font-size:.82rem;border-radius:2px;cursor:default;border:1px solid transparent;transition:all .15s}
+.aday.past{color:#1e1e1e}.aday.empty{visibility:hidden}
+.aday.open{background:#1a1a1a;color:var(--white);cursor:pointer}.aday.open:hover{border-color:var(--gold);color:var(--gold)}
+.aday.has-bookings{background:rgba(201,168,76,.15);border-color:rgba(201,168,76,.4);color:var(--gold);cursor:pointer}
+.aday.selected{background:var(--gold);color:#000;font-weight:700}
+.aday.today{text-decoration:underline;text-underline-offset:3px}
+.day-detail{background:var(--black-card);border:1px solid var(--black-border);padding:1.5rem}
+.day-detail-title{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.hour-row{display:flex;align-items:center;justify-content:space-between;padding:.7rem 1rem;border-bottom:1px solid var(--black-border);transition:background .2s}
+.hour-row:last-child{border:none}
+.hour-time{font-size:.9rem;color:var(--white);min-width:60px}
+.hour-info{flex:1;padding:0 1rem;font-size:.82rem}
+.hour-free{color:var(--text-muted)}
+.hour-booked{color:var(--white)}
+.hour-booked .booking-name{font-weight:500;color:var(--gold-light)}
+.hour-booked .booking-details{font-size:.75rem;color:var(--text-muted);margin-top:.2rem}
+.hour-actions{display:flex;gap:.5rem}
+.btn-small{padding:.3rem .8rem;font-size:.7rem;border:none;border-radius:2px;cursor:pointer;font-family:var(--ff-b);font-weight:600;letter-spacing:.08em;text-transform:uppercase;transition:all .2s}
+.btn-block{background:var(--red);color:#fff}.btn-block:hover{opacity:.8}
+.btn-unblock{background:var(--green);color:#fff}.btn-unblock:hover{opacity:.8}
+.btn-delete{background:#333;color:var(--text-muted)}.btn-delete:hover{background:var(--red);color:#fff}
+
+/* MEDIA */
+.media-section-title{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--black-border)}
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem}
+.media-card{background:var(--black-card);border:1px solid var(--black-border);padding:1.2rem}
+.media-preview{width:100%;height:160px;object-fit:cover;display:block;border-radius:2px;margin-bottom:.8rem;background:#111}
+.media-preview-video{width:100%;height:160px;object-fit:cover;display:block;border-radius:2px;margin-bottom:.8rem;background:#111}
+.media-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem}
+.media-url{width:100%;background:#111;border:1px solid #2a2a2a;color:var(--white);font-size:.78rem;padding:.5rem .7rem;border-radius:2px;outline:none;margin-bottom:.5rem;font-family:var(--ff-b)}
+.media-url:focus{border-color:var(--gold)}
+.upload-area{border:2px dashed var(--black-border);border-radius:4px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:.5rem}
+.upload-area:hover{border-color:var(--gold)}
+.upload-area input{display:none}
+.upload-txt{font-size:.78rem;color:var(--text-muted)}
+.upload-txt span{color:var(--gold)}
+.btn-save-media{width:100%;background:var(--gold);color:#000;border:none;font-size:.75rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.7rem;cursor:pointer;border-radius:2px;font-family:var(--ff-b);transition:background .2s}
+.btn-save-media:hover{background:var(--gold-light)}
+.btn-save-media:disabled{background:#333;color:#555;cursor:not-allowed}
+.save-status{font-size:.72rem;text-align:center;margin-top:.4rem;min-height:1rem}
+.save-ok{color:var(--green)}.save-err{color:var(--red)}
+
+/* NOTIF */
+.notif{position:fixed;bottom:2rem;right:2rem;background:var(--black-card);border:1px solid var(--gold);color:var(--white);padding:1rem 1.5rem;border-radius:4px;font-size:.85rem;z-index:9999;transform:translateY(100px);transition:transform .3s;display:none}
+.notif.show{display:block;transform:translateY(0)}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">✂️</div>
+    <div class="login-title">Chaki Barber</div>
+    <div class="login-sub">Panel de Administrador</div>
+    <input class="login-input" type="email" id="login-email" placeholder="Email de administrador">
+    <input class="login-input" type="password" id="login-pass" placeholder="Contrasena" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-error" id="login-error">Email o contrasena incorrectos</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="admin-header">
+    <span class="admin-title">✂ Chaki Barber — Admin</span>
+    <button class="logout-btn" onclick="doLogout()">Cerrar sesion</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('agenda',this)">📅 Agenda</button>
+    <button class="tab" onclick="switchTab('media',this)">🖼 Fotos y Videos</button>
+  </div>
+
+  <!-- AGENDA -->
+  <div id="tab-agenda" class="tab-content active">
+    <div class="agenda-controls">
+      <button onclick="agendaChangeMonth(-1)">&#8592;</button>
+      <span class="agenda-month" id="agenda-month"></span>
+      <button onclick="agendaChangeMonth(1)">&#8594;</button>
+    </div>
+    <div class="agenda-hdr">
+      <div>LUN</div><div>MAR</div><div>MIE</div><div>JUE</div><div>VIE</div><div style="color:var(--gold)">SAB</div><div style="color:var(--gold)">DOM</div>
+    </div>
+    <div class="agenda-grid" id="agenda-grid"></div>
+    <div id="day-detail" style="display:none" class="day-detail">
+      <div class="day-detail-title" id="detail-title"></div>
+      <div id="detail-hours"></div>
+    </div>
+  </div>
+
+  <!-- MEDIA -->
+  <div id="tab-media" class="tab-content">
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem">Sube o pega una URL. Los cambios se aplican en la web al instante.</p>
+
+    <div class="media-section-title">📷 Fotos</div>
+    <div class="media-grid" id="media-grid-fotos"></div>
+
+    <div class="media-section-title">🎬 Videos</div>
+    <div class="media-grid" id="media-grid-videos"></div>
+  </div>
+</div>
+
+<div class="notif" id="notif"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getDatabase, ref, onValue, set, remove, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB6v_KJeXlC_zhOtBIc_mDj1jCeeZ_Imjk",
+  authDomain: "chaki-barber.firebaseapp.com",
+  projectId: "chaki-barber",
+  storageBucket: "chaki-barber.firebasestorage.app",
+  messagingSenderId: "286139713696",
+  appId: "1:286139713696:web:e7e856fb2777d19e2d21c5",
+  databaseURL: "https://chaki-barber-default-rtdb.europe-west1.firebasedatabase.app/"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+onAuthStateChanged(auth, function(user){
+  if(user){
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    initDashboard(db, ref, set, remove, get);
+  } else {
+    document.getElementById('login-screen').style.display='flex';
+    document.getElementById('dashboard').style.display='none';
+  }
+});
+
+window.doLogin = async function(){
+  var email=document.getElementById('login-email').value;
+  var pass=document.getElementById('login-pass').value;
+  var err=document.getElementById('login-error');
+  try{
+    await signInWithEmailAndPassword(auth,email,pass);
+    err.style.display='none';
+  } catch(e){
+    err.style.display='block';
+  }
+};
+
+window.doLogout = async function(){
+  await signOut(auth);
+};
+
+function initDashboard(db, ref, set, remove, get){
+  var MN=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+  var WKHRS=["12:30","13:30","14:30","15:30","16:30","17:30","18:30","19:30"];
+  var WEKHRS=["14:00","15:00","16:00","17:00","18:00","19:00","20:00"];
+  var agM=new Date().getMonth(),agY=new Date().getFullYear();
+  var selectedAgDay=null;
+  var allBookings={};
+
+  function pad(n){return String(n).padStart(2,"0");}
+  function dstr(y,m,d){return y+"-"+pad(m+1)+"-"+pad(d);}
+
+  function loadMonthBookings(){
+    var monthKey=agY+"-"+pad(agM+1);
+    onValue(ref(db,'bookings/'+monthKey), function(snap){
+      allBookings[monthKey]=snap.val()||{};
+      renderAgenda();
+    });
+  }
+
+  function renderAgenda(){
+    document.getElementById('agenda-month').textContent=MN[agM]+" "+agY;
+    var g=document.getElementById('agenda-grid');g.innerHTML="";
+    var fd=new Date(agY,agM,1).getDay();fd=fd===0?6:fd-1;
+    var dim=new Date(agY,agM+1,0).getDate();
+    var today=new Date();today.setHours(0,0,0,0);
+    var monthKey=agY+"-"+pad(agM+1);
+    for(var i=0;i<fd;i++){var e=document.createElement("div");e.className="aday empty";g.appendChild(e);}
+    for(var d=1;d<=dim;d++){
+      var dt=new Date(agY,agM,d);
+      var ds=dstr(agY,agM,d);
+      var el=document.createElement("div");el.textContent=d;
+      var cls="aday";
+      if(dt<today)cls+=" past";
+      else {
+        var dayData=allBookings[monthKey]&&allBookings[monthKey][ds];
+        if(dayData&&Object.keys(dayData).length>0)cls+=" has-bookings";
+        else cls+=" open";
+      }
+      if(dt.toDateString()===today.toDateString())cls+=" today";
+      if(selectedAgDay===ds)cls+=" selected";
+      el.className=cls;
+      if(cls.indexOf("past")<0)(function(s,o){el.onclick=function(){showDayDetail(s,o);};})(ds,dt);
+      g.appendChild(el);
+    }
+  }
+
+  async function showDayDetail(ds,dt){
+    selectedAgDay=ds;renderAgenda();
+    var dow=dt.getDay();var isW=dow===0||dow===6;
+    var sl=isW?WEKHRS:WKHRS;
+    var lbl=dt.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+    lbl=lbl.charAt(0).toUpperCase()+lbl.slice(1);
+    document.getElementById('detail-title').textContent=lbl;
+    var snap=await get(ref(db,'bookings/'+ds));
+    var data=snap.val()||{};
+    var html="";
+    sl.forEach(function(h){
+      var key=h.replace(":","");
+      var b=data[key];
+      html+='<div class="hour-row">';
+      html+='<span class="hour-time">'+h+'</span>';
+      if(b&&b.confirmed){
+        html+='<div class="hour-info hour-booked">';
+        html+='<div class="booking-name">'+b.nombre+'</div>';
+        html+='<div class="booking-details">'+b.telefono+' · '+b.servicio+(b.nota?' · '+b.nota:'')+'</div>';
+        html+='</div>';
+        html+='<div class="hour-actions">';
+        html+='<button class="btn-small btn-delete" onclick="deleteBooking(\''+ds+'\',\''+key+'\')">Eliminar</button>';
+        html+='</div>';
+      } else if(b&&b.blocked){
+        html+='<div class="hour-info" style="color:#555">— Bloqueado manualmente —</div>';
+        html+='<div class="hour-actions"><button class="btn-small btn-unblock" onclick="unblockHour(\''+ds+'\',\''+key+'\')">Liberar</button></div>';
+      } else {
+        html+='<div class="hour-info hour-free">Libre</div>';
+        html+='<div class="hour-actions"><button class="btn-small btn-block" onclick="blockHour(\''+ds+'\',\''+key+'\')">Bloquear</button></div>';
+      }
+      html+='</div>';
+    });
+    document.getElementById('detail-hours').innerHTML=html;
+    document.getElementById('day-detail').style.display='block';
+  }
+
+  window.deleteBooking=async function(ds,key){
+    if(!confirm("Eliminar esta reserva?"))return;
+    await remove(ref(db,'bookings/'+ds+'/'+key));
+    showNotif("Reserva eliminada");
+    showDayDetail(ds,new Date(ds+"T12:00:00"));
+  };
+  window.blockHour=async function(ds,key){
+    await set(ref(db,'bookings/'+ds+'/'+key),{blocked:true,confirmed:false});
+    showNotif("Hora bloqueada");
+    showDayDetail(ds,new Date(ds+"T12:00:00"));
+  };
+  window.unblockHour=async function(ds,key){
+    await remove(ref(db,'bookings/'+ds+'/'+key));
+    showNotif("Hora liberada");
+    showDayDetail(ds,new Date(ds+"T12:00:00"));
+  };
+
+  window.agendaChangeMonth=function(d){
+    agM+=d;if(agM>11){agM=0;agY++;}if(agM<0){agM=11;agY--;}
+    selectedAgDay=null;
+    document.getElementById('day-detail').style.display='none';
+    loadMonthBookings();
+  };
+
+  // MEDIA — FOTOS
+  var photoItems=[
+    {id:'logo',label:'Logo (nav y footer)',key:'logo'},
+    {id:'heroImg',label:'Foto principal (hero)',key:'heroImg'},
+    {id:'galMain',label:'Galeria — foto grande',key:'galMain'},
+    {id:'gal0',label:'Galeria — foto 1',key:'gal0'},
+    {id:'gal1',label:'Galeria — foto 2',key:'gal1'},
+    {id:'gal2',label:'Galeria — foto 3',key:'gal2'},
+    {id:'gal3',label:'Galeria — foto 4',key:'gal3'},
+  ];
+
+  // MEDIA — VIDEOS
+  var videoItems=[
+    {id:'vid0',label:'Video 1 (Anclado)',key:'vid0'},
+    {id:'vid1',label:'Video 2',key:'vid1'},
+    {id:'vid2',label:'Video 3',key:'vid2'},
+    {id:'vid3',label:'Video 4',key:'vid3'},
+  ];
+
+  var currentMedia={};
+  // Render grids immediately so they show even before Firebase loads
+  renderPhotoGrid();
+  renderVideoGrid();
+  onValue(ref(db,'media'), function(snap){
+    currentMedia=snap.val()||{};
+    renderPhotoGrid();
+    renderVideoGrid();
+  });
+
+  function renderPhotoGrid(){
+    var g=document.getElementById('media-grid-fotos');
+    g.innerHTML="";
+    photoItems.forEach(function(item){
+      var url=currentMedia[item.key]||"";
+      var card=document.createElement('div');
+      card.className='media-card';
+      card.innerHTML=
+        '<img class="media-preview" id="prev-'+item.id+'" src="'+(url||'img/logo.jpg')+'" onerror="this.src=\'img/logo.jpg\'">'
+        +'<div class="media-label">'+item.label+'</div>'
+        +'<label class="upload-area" for="file-'+item.id+'">'
+        +'<input type="file" id="file-'+item.id+'" accept="image/*" onchange="uploadToCloudinary(this,\''+item.key+'\',\'image\')">'
+        +'<div class="upload-txt"><span>Subir imagen</span> o pega URL abajo</div>'
+        +'</label>'
+        +'<input class="media-url" id="url-'+item.id+'" type="url" placeholder="https://res.cloudinary.com/..." value="'+url+'">'
+        +'<button class="btn-save-media" onclick="saveMediaUrl(\''+item.id+'\',\''+item.key+'\')">Guardar</button>'
+        +'<div class="save-status" id="status-'+item.id+'"></div>';
+      g.appendChild(card);
+    });
+  }
+
+  function renderVideoGrid(){
+    var g=document.getElementById('media-grid-videos');
+    g.innerHTML="";
+    videoItems.forEach(function(item){
+      var url=currentMedia[item.key]||"";
+      var card=document.createElement('div');
+      card.className='media-card';
+      card.innerHTML=
+        '<video class="media-preview-video" id="prev-'+item.id+'" src="'+url+'" controls muted style="background:#000"></video>'
+        +'<div class="media-label">'+item.label+'</div>'
+        +'<label class="upload-area" for="file-'+item.id+'">'
+        +'<input type="file" id="file-'+item.id+'" accept="video/*" onchange="uploadToCloudinary(this,\''+item.key+'\',\'video\')">'
+        +'<div class="upload-txt"><span>Subir video</span> o pega URL abajo</div>'
+        +'</label>'
+        +'<input class="media-url" id="url-'+item.id+'" type="url" placeholder="https://res.cloudinary.com/..." value="'+url+'">'
+        +'<button class="btn-save-media" onclick="saveMediaUrl(\''+item.id+'\',\''+item.key+'\')">Guardar</button>'
+        +'<div class="save-status" id="status-'+item.id+'"></div>';
+      g.appendChild(card);
+    });
+  }
+
+  window.uploadToCloudinary=async function(input,key,type){
+    var file=input.files[0];if(!file)return;
+    var itemId=input.id.replace('file-','');
+    var statusEl=document.getElementById('status-'+itemId);
+    statusEl.textContent="Subiendo...";statusEl.className="save-status";
+    var formData=new FormData();
+    formData.append('file',file);
+    formData.append('upload_preset','chaki_barber');
+    var resourceType=type==='video'?'video':'image';
+    try{
+      var res=await fetch('https://api.cloudinary.com/v1_1/da9dqlnkk/'+resourceType+'/upload',{method:'POST',body:formData});
+      var data=await res.json();
+      if(data.secure_url){
+        await set(ref(db,'media/'+key),data.secure_url);
+        document.getElementById('url-'+itemId).value=data.secure_url;
+        if(type==='video'){
+          document.getElementById('prev-'+itemId).src=data.secure_url;
+        } else {
+          document.getElementById('prev-'+itemId).src=data.secure_url;
+        }
+        statusEl.textContent="✓ Subido y guardado";statusEl.className="save-status save-ok";
+        showNotif(type==='video'?"Video actualizado en la web":"Imagen actualizada en la web");
+      } else {
+        statusEl.textContent="Error: "+(data.error&&data.error.message?data.error.message:"Error al subir");statusEl.className="save-status save-err";
+      }
+    }catch(e){
+      statusEl.textContent="Error: "+e.message;statusEl.className="save-status save-err";
+    }
+  };
+
+  window.saveMediaUrl=async function(itemId,key){
+    var url=document.getElementById('url-'+itemId).value.trim();
+    var statusEl=document.getElementById('status-'+itemId);
+    if(!url){statusEl.textContent="Introduce una URL";statusEl.className="save-status save-err";return;}
+    try{
+      await set(ref(db,'media/'+key),url);
+      var prev=document.getElementById('prev-'+itemId);
+      prev.src=url;
+      statusEl.textContent="✓ Guardado";statusEl.className="save-status save-ok";
+      showNotif("Actualizado en la web");
+    }catch(e){
+      statusEl.textContent="Error al guardar";statusEl.className="save-status save-err";
+    }
+  };
+
+  loadMonthBookings();
+}
+
+function showNotif(msg){
+  var n=document.getElementById('notif');
+  n.textContent=msg;n.classList.add('show');
+  setTimeout(function(){n.classList.remove('show');},3000);
+}
+window.showNotif=showNotif;
+
+window.switchTab=function(name,btn){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+};
+</script>
+</body>
+</html>
