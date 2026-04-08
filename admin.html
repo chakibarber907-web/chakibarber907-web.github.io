@@ -340,8 +340,8 @@ function initDashboard(db, ref, set, remove, get){
     statusEl.textContent="Subiendo...";statusEl.className="save-status";
     var formData=new FormData();
     formData.append('file',file);
-    formData.append('upload_preset','chaki_barber_upload');
-    formData.append('cloud_name','da9dqlnkk');
+   formData.append('upload_preset','ml_default');
+formData.append('cloud_name','da9dqlnkk');
     try{
       var res=await fetch('https://api.cloudinary.com/v1_1/da9dqlnkk/image/upload',{method:'POST',body:formData});
       var data=await res.json();
