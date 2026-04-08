@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chaki Barber</title>
+<meta name="description" content="Chaki Barber - Cortes de precision en Barcelona. Reserva tu cita online.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#C9A84C;--gold-light:#E8C96A;--gold-dim:rgba(201,168,76,0.25);--black:#080808;--black-mid:#111;--black-card:#161616;--black-border:#222;--text-muted:#777;--text-body:#B8B8B8;--white:#F0EBE0;--ff-d:'Cormorant Garamond',Georgia,serif;--ff-b:'Outfit',sans-serif}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text-body);font-family:var(--ff-b);font-weight:300;line-height:1.7;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1rem 5%;background:rgba(8,8,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--black-border)}
+.nav-logo img{height:46px;width:46px;border-radius:50%;object-fit:cover}
+.nav-links{display:flex;list-style:none;gap:2.5rem}
+.nav-links a{color:var(--text-body);text-decoration:none;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold)!important;color:var(--black)!important;padding:.5rem 1.5rem;border-radius:2px;font-weight:500!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:1.5px;background:var(--gold)}
+.mob-menu{display:none;position:fixed;top:66px;left:0;right:0;background:var(--black-mid);border-bottom:1px solid var(--black-border);padding:1.5rem 5%;z-index:199;flex-direction:column;gap:1.2rem}
+.mob-menu.open{display:flex}
+.mob-menu a{color:var(--text-body);text-decoration:none;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase}
+#inicio{min-height:100vh;display:flex;align-items:center;padding:6rem 5% 4rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 65% 40%,rgba(201,168,76,.07) 0%,transparent 55%),linear-gradient(160deg,#080808 40%,#111 100%)}
+.hero-grid{position:absolute;inset:0;background-image:repeating-linear-gradient(0deg,transparent,transparent 70px,rgba(201,168,76,.025) 70px,rgba(201,168,76,.025) 71px),repeating-linear-gradient(90deg,transparent,transparent 70px,rgba(201,168,76,.025) 70px,rgba(201,168,76,.025) 71px)}
+.hero-layout{position:relative;z-index:1;display:grid;grid-template-columns:1fr 380px;gap:4rem;align-items:center;width:100%;max-width:1200px}
+.hero-eye{font-size:.7rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;opacity:0;animation:fu .8s .2s forwards}
+.hero-eye::before{content:'';display:inline-block;width:36px;height:1px;background:var(--gold)}
+.hero-h1{font-family:var(--ff-d);font-size:clamp(3.8rem,8vw,6.5rem);font-weight:700;color:var(--white);line-height:.95;opacity:0;animation:fu .8s .35s forwards}
+.hero-h1 em{display:block;color:var(--gold);font-style:italic;font-weight:300;font-size:clamp(2rem,4vw,3.2rem)}
+.hero-p{font-size:.92rem;color:var(--text-muted);max-width:420px;margin:1.5rem 0 2.5rem;opacity:0;animation:fu .8s .5s forwards;line-height:1.8}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fu .8s .65s forwards}
+.btn-g{background:var(--gold);color:var(--black);padding:.85rem 2.2rem;border:none;font-family:var(--ff-b);font-size:.77rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-radius:2px;cursor:pointer;transition:background .2s,transform .2s;display:inline-block}
+.btn-g:hover{background:var(--gold-light);transform:translateY(-2px)}
+.btn-o{background:transparent;color:var(--white);padding:.85rem 2.2rem;border:1px solid rgba(255,255,255,.2);font-family:var(--ff-b);font-size:.77rem;letter-spacing:.18em;text-transform:uppercase;text-decoration:none;border-radius:2px;transition:border-color .2s,color .2s;display:inline-block}
+.btn-o:hover{border-color:var(--gold);color:var(--gold)}
+.hero-img-wrap{opacity:0;animation:fi .9s .4s forwards}
+.hero-img-frame{border:1px solid var(--gold-dim);padding:12px;position:relative}
+.hero-img-frame::before{content:'';position:absolute;top:-8px;right:-8px;bottom:8px;left:8px;border:1px solid rgba(201,168,76,.12);z-index:-1}
+.hero-img-frame img{width:100%;height:480px;object-fit:cover;object-position:top;display:block;filter:grayscale(20%)}
+.hero-badge{position:absolute;bottom:-20px;left:-20px;width:100px;height:100px;border-radius:50%;border:1px solid var(--gold-dim);background:var(--black-mid);display:flex;flex-direction:column;align-items:center;justify-content:center}
+.hero-badge-n{font-family:var(--ff-d);font-size:2rem;font-weight:700;color:var(--gold);line-height:1}
+.hero-badge-t{font-size:.55rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)}
+.hero-stats{display:flex;gap:2rem;margin-top:2.5rem;opacity:0;animation:fu .8s .8s forwards}
+.stat-n{font-family:var(--ff-d);font-size:2rem;font-weight:700;color:var(--gold)}
+.stat-l{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
+section{padding:6rem 5%}
+.slabel{display:block;font-size:.68rem;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:.8rem}
+.stitle{font-family:var(--ff-d);font-size:clamp(2rem,4.5vw,3.2rem);font-weight:600;color:var(--white);line-height:1.1;margin-bottom:1rem}
+.sline{width:50px;height:1px;background:var(--gold);margin-bottom:2.5rem}
+#servicios{background:var(--black-mid);border-top:1px solid var(--black-border)}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--black-border);border:1px solid var(--black-border)}
+.svc-card{background:var(--black-card);padding:2.2rem 1.8rem;position:relative;overflow:hidden;transition:background .3s}
+.svc-card::after{content:'';position:absolute;bottom:0;left:0;width:0;height:2px;background:var(--gold);transition:width .4s}
+.svc-card:hover{background:#1c1c1c}.svc-card:hover::after{width:100%}
+.svc-icon{font-size:1.5rem;margin-bottom:.9rem}
+.svc-name{font-family:var(--ff-d);font-size:1.25rem;font-weight:600;color:var(--white);margin-bottom:.4rem}
+.svc-desc{font-size:.82rem;color:var(--text-muted);margin-bottom:1.2rem;line-height:1.6}
+.svc-price{font-family:var(--ff-d);font-size:2rem;font-weight:700;color:var(--gold)}
+.svc-price sub{font-size:.8rem;font-family:var(--ff-b);font-weight:300;color:var(--text-muted)}
+.svc-popular{position:absolute;top:1rem;right:1rem;background:var(--gold);color:var(--black);font-size:.6rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:.25rem .7rem;border-radius:2px}
+#galeria{background:var(--black)}
+.gal-sublabel{font-size:.7rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;display:block}
+.photos-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,280px);gap:6px;margin-bottom:3rem}
+.gal-item{border:1px solid var(--black-border);position:relative;overflow:hidden}
+.gal-item img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+.gal-item:hover img{transform:scale(1.05)}
+.gal-item.big{grid-row:span 2}
+.gal-ov{position:absolute;inset:0;background:rgba(201,168,76,.07);opacity:0;transition:opacity .3s;display:flex;align-items:center;justify-content:center}
+.gal-item:hover .gal-ov{opacity:1}
+.gal-ov-t{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold-dim);padding:.4rem 1rem}
+.videos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.vid-card{position:relative;border:1px solid var(--black-border);overflow:hidden;aspect-ratio:9/16;background:#000;cursor:pointer}
+.vid-card video{width:100%;height:100%;object-fit:cover;display:block}
+.vid-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
+.vid-card:hover .vid-overlay,.vid-card.paused .vid-overlay{opacity:1}
+.vid-card.playing .vid-overlay{opacity:0}.vid-card.playing:hover .vid-overlay{opacity:1}
+.vid-btn{width:60px;height:60px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:1.4rem;padding-left:4px;transition:transform .2s}
+.vid-btn:hover{transform:scale(1.1)}
+.vid-badge{position:absolute;top:10px;left:10px;z-index:10;background:var(--gold);color:#000;font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .6rem;border-radius:2px}
+.gal-note{margin-top:1.5rem;font-size:.82rem;color:var(--text-muted)}
+.gal-ig{color:var(--gold);text-decoration:none;border-bottom:1px solid var(--gold-dim);transition:color .2s}
+#reservar{background:var(--black-mid);border-top:1px solid var(--black-border)}
+.res-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start;margin-top:2rem}
+.step-label{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem}
+.step-num{width:26px;height:26px;border-radius:50%;background:var(--gold);color:#000;font-size:.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-txt{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--white)}
+.cal-box{background:var(--black-card);border:1px solid var(--black-border);padding:1.5rem;margin-bottom:1.2rem}
+.cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.cal-nav button{background:none;border:1px solid var(--black-border);color:var(--gold);width:32px;height:32px;cursor:pointer;font-size:1rem;border-radius:2px;transition:border-color .2s}
+.cal-nav button:hover{border-color:var(--gold)}
+.cal-nav span{font-family:var(--ff-d);font-size:1rem;font-weight:600;color:var(--white)}
+.cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.cal-hdr div{text-align:center;font-size:.58rem;letter-spacing:.06em;color:var(--text-muted);padding:.2rem 0}
+.cal-hdr .we{color:var(--gold)}
+#cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.rday{text-align:center;padding:.5rem .2rem;font-size:.82rem;border-radius:2px;transition:all .15s;cursor:default;border:1px solid transparent}
+.rday.avail{color:var(--white);cursor:pointer;background:#1a1a1a}
+.rday.avail:hover{background:rgba(201,168,76,.15);border-color:rgba(201,168,76,.4);color:var(--gold)}
+.rday.sel{background:rgba(201,168,76,.2)!important;border-color:var(--gold)!important;color:var(--gold)!important;font-weight:600}
+.rday.taken{color:#2a2a2a;background:#0d0d0d}
+.rday.past{color:#1e1e1e;background:transparent}
+.rday.empty{visibility:hidden}
+.rday.tod.avail{border-color:rgba(201,168,76,.5);color:var(--gold)}
+.cal-legend{display:flex;gap:1.2rem;margin-top:.8rem;font-size:.65rem;color:var(--text-muted)}
+.hours-box{background:var(--black-card);border:1px solid var(--black-border);padding:1.5rem;margin-bottom:1.2rem}
+.hours-date{font-size:.82rem;color:var(--gold);margin-bottom:.8rem;font-family:var(--ff-d);font-style:italic}
+#hours-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rhr{padding:.6rem .4rem;font-size:.82rem;text-align:center;border:1px solid #2a2a2a;background:#111;color:var(--white);cursor:pointer;border-radius:2px;transition:all .15s;font-family:var(--ff-b)}
+.rhr.free:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08)}
+.rhr.busy{color:#252525;cursor:not-allowed;border-color:#111;background:#0a0a0a;position:relative}
+.rhr.busy::after{content:'✕';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#333;font-size:.7rem}
+.rhr.selh{border-color:var(--gold);background:var(--gold);color:#000;font-weight:700}
+.horario-box{border-top:1px solid var(--black-border);padding-top:1.2rem;margin-top:1.2rem}
+.horario-row{display:flex;justify-content:space-between;padding:.32rem 0;font-size:.8rem;border-bottom:1px solid #1a1a1a}
+.horario-row:last-child{border:none}
+.form-box{background:var(--black-card);border:1px solid var(--black-border);padding:2rem}
+.form-title{font-family:var(--ff-d);font-size:1.4rem;font-weight:600;color:var(--white);margin-bottom:1.5rem}
+.cita-resumen{display:none;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);padding:.8rem 1rem;margin-bottom:1.2rem;border-radius:2px}
+.cr-label{font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem}
+.cr-val{font-size:.9rem;color:var(--white);font-family:var(--ff-d)}
+.form-group{margin-bottom:1rem}
+.form-group label{display:block;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:#111;border:1px solid #2a2a2a;color:var(--white);font-family:var(--ff-b);font-size:.88rem;padding:.75rem 1rem;border-radius:2px;outline:none;transition:border-color .2s;appearance:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--gold)}
+.form-group textarea{resize:none}
+.btn-wa{width:100%;background:var(--gold);color:#000;border:none;font-family:var(--ff-b);font-size:.8rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:1.1rem;cursor:pointer;border-radius:2px;transition:background .2s;margin-top:.5rem}
+.btn-wa:hover{background:var(--gold-light)}
+.btn-wa:disabled{background:#333;color:#666;cursor:not-allowed}
+.btn-wa-note{font-size:.7rem;color:var(--text-muted);margin-top:.6rem;text-align:center}
+#send-anim{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:99999;flex-direction:column;gap:2rem;align-items:center;justify-content:center}
+.env-txt{font-family:var(--ff-d);font-size:2.4rem;color:var(--gold);font-weight:600;letter-spacing:.05em;text-align:center;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s}
+.env-sub{font-size:.85rem;color:var(--text-muted);letter-spacing:.12em;opacity:0;transition:opacity .5s .3s}
+#contacto{background:var(--black);border-top:1px solid var(--black-border)}
+.ct-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;margin-top:3rem}
+.ct-item{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.5rem}
+.ct-icon{width:40px;height:40px;border:1px solid var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;color:var(--gold)}
+.ct-text h4{font-size:.68rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.2rem}
+.ct-text a,.ct-text p{color:var(--text-body);text-decoration:none;font-size:.9rem}
+.ct-text a:hover{color:var(--gold)}
+.social-row{display:flex;gap:1rem;margin-top:2rem;flex-wrap:wrap}
+.social-btn{display:inline-flex;align-items:center;gap:.6rem;border:1px solid var(--black-border);padding:.65rem 1.2rem;color:var(--text-body);text-decoration:none;font-size:.78rem;letter-spacing:.1em;transition:border-color .2s,color .2s;border-radius:2px}
+.social-btn:hover{border-color:var(--gold);color:var(--gold)}
+footer{background:var(--black-mid);border-top:1px solid var(--black-border);padding:2.5rem 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.foot-logo img{height:40px;width:40px;border-radius:50%;object-fit:cover}
+.foot-txt{font-size:.75rem;color:var(--text-muted)}
+.foot-ig a{color:var(--gold);text-decoration:none;font-size:.78rem}
+@keyframes fu{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fi{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@media(max-width:900px){
+  .nav-links{display:none}.hamburger{display:flex}
+  .hero-layout{grid-template-columns:1fr}.hero-img-wrap{display:none}
+  .res-layout,.ct-layout{grid-template-columns:1fr}
+  .videos-grid{grid-template-columns:repeat(2,1fr)}
+  .photos-grid{grid-template-columns:repeat(2,1fr);grid-template-rows:auto}
+  .gal-item.big{grid-row:span 1}
+  section{padding:4rem 5%}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#inicio" class="nav-logo"><img id="nav-logo-img" src="img/logo.jpg" alt="Chaki Barber"></a>
+  <ul class="nav-links">
+    <li><a href="#inicio">Inicio</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#reservar">Reservar</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+    <li><a href="#reservar" class="nav-cta">Reservar</a></li>
+  </ul>
+  <button class="hamburger" onclick="document.getElementById('mob').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mob-menu" id="mob">
+  <a href="#inicio" onclick="this.closest('.mob-menu').classList.remove('open')">Inicio</a>
+  <a href="#servicios" onclick="this.closest('.mob-menu').classList.remove('open')">Servicios</a>
+  <a href="#galeria" onclick="this.closest('.mob-menu').classList.remove('open')">Galeria</a>
+  <a href="#reservar" onclick="this.closest('.mob-menu').classList.remove('open')">Reservar</a>
+  <a href="#contacto" onclick="this.closest('.mob-menu').classList.remove('open')">Contacto</a>
+</div>
+
+<section id="inicio">
+  <div class="hero-bg"></div><div class="hero-grid"></div>
+  <div class="hero-layout">
+    <div>
+      <p class="hero-eye">Bienvenido a</p>
+      <h1 class="hero-h1">CHAKI<em>BARBER</em></h1>
+      <p class="hero-p">Cortes de precision, estilo y experiencia. Tu imagen, nuestra pasion. Cada detalle cuenta.</p>
+      <div class="hero-btns">
+        <a href="#reservar" class="btn-g">Reservar cita</a>
+        <a href="#servicios" class="btn-o">Ver servicios</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-n">+500</div><div class="stat-l">Clientes</div></div>
+        <div><div class="stat-n">100%</div><div class="stat-l">Dedicacion</div></div>
+        <div><div class="stat-n">KN</div><div class="stat-l">El Chaki</div></div>
+      </div>
+    </div>
+    <div class="hero-img-wrap">
+      <div class="hero-img-frame">
+        <img id="hero-img" src="img/person.webp" alt="El Chaki">
+        <div class="hero-badge"><span class="hero-badge-n">KN</span><span class="hero-badge-t">EL CHAKI</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="servicios">
+  <span class="slabel reveal">Lo que ofrezco</span>
+  <h2 class="stitle reveal">Servicios &amp; Precios</h2>
+  <div class="sline reveal"></div>
+  <div class="svc-grid" id="svc-grid">
+    <div class="svc-card reveal"><div class="svc-icon">💈</div><div class="svc-name">Corte + Barba</div><div class="svc-desc">Corte completo con perfilado y arreglo de barba.</div><div class="svc-price">15<sub>€</sub></div></div>
+    <div class="svc-card reveal"><span class="svc-popular">Popular</span><div class="svc-icon">✂️</div><div class="svc-name">Corte normal</div><div class="svc-desc">Corte a maquina y tijera con acabado perfecto.</div><div class="svc-price">10<sub>€</sub></div></div>
+    <div class="svc-card reveal"><div class="svc-icon">🪒</div><div class="svc-name">Arreglo barba</div><div class="svc-desc">Perfilado, recorte y acabado con navaja.</div><div class="svc-price">5<sub>€</sub></div></div>
+    <div class="svc-card reveal"><div class="svc-icon">⚡</div><div class="svc-name">Diseno / lineas</div><div class="svc-desc">Disenos personalizados y detalles a navaja.</div><div class="svc-price">+3<sub>€</sub></div></div>
+    <div class="svc-card reveal"><div class="svc-icon">🧒</div><div class="svc-name">Ninos</div><div class="svc-desc">Corte para ninos hasta 10 anos, con mimo y paciencia.</div><div class="svc-price">7<sub>€</sub></div></div>
+  </div>
+</section>
+
+<section id="galeria">
+  <span class="slabel reveal">Mi trabajo</span>
+  <h2 class="stitle reveal">Galeria</h2>
+  <div class="sline reveal"></div>
+  <span class="gal-sublabel reveal">— Fotos</span>
+  <div class="photos-grid reveal" id="photos-grid">
+    <div class="gal-item big"><img id="gal-main" src="img/person.webp" alt="El Chaki"><div class="gal-ov"><span class="gal-ov-t">El Chaki</span></div></div>
+    <div class="gal-item"><img id="gal-0" src="img/ig0.jpg" alt="Corte"><div class="gal-ov"><span class="gal-ov-t">Ver mas</span></div></div>
+    <div class="gal-item"><img id="gal-1" src="img/ig1.jpg" alt="Corte"><div class="gal-ov"><span class="gal-ov-t">Ver mas</span></div></div>
+    <div class="gal-item"><img id="gal-2" src="img/ig2.jpg" alt="Corte"><div class="gal-ov"><span class="gal-ov-t">Ver mas</span></div></div>
+    <div class="gal-item"><img id="gal-3" src="img/ig3.jpg" alt="Corte"><div class="gal-ov"><span class="gal-ov-t">Ver mas</span></div></div>
+  </div>
+  <span class="gal-sublabel reveal">— Videos</span>
+  <div class="videos-grid reveal">
+    <div class="vid-card paused" onclick="toggleVid(this)"><video preload="metadata" loop playsinline><source src="videos/vid0.mp4" type="video/mp4"></video><div class="vid-badge">Anclado</div><div class="vid-overlay"><div class="vid-btn">&#9654;</div></div></div>
+    <div class="vid-card paused" onclick="toggleVid(this)"><video preload="metadata" loop playsinline><source src="videos/vid1.mp4" type="video/mp4"></video><div class="vid-overlay"><div class="vid-btn">&#9654;</div></div></div>
+    <div class="vid-card paused" onclick="toggleVid(this)"><video preload="metadata" loop playsinline><source src="videos/vid2.mp4" type="video/mp4"></video><div class="vid-overlay"><div class="vid-btn">&#9654;</div></div></div>
+    <div class="vid-card paused" onclick="toggleVid(this)"><video preload="metadata" loop playsinline><source src="videos/vid3.mp4" type="video/mp4"></video><div class="vid-overlay"><div class="vid-btn">&#9654;</div></div></div>
+  </div>
+  <p class="gal-note" style="margin-top:1.5rem">
+    📷 <a href="https://www.instagram.com/chakibarber907/" target="_blank" class="gal-ig">@chakibarber907 Instagram</a>
+    &nbsp;·&nbsp;
+    🎬 <a href="https://www.tiktok.com/@chakibarber907" target="_blank" class="gal-ig">@chakibarber907 TikTok</a>
+  </p>
+</section>
+
+<section id="reservar">
+  <span class="slabel reveal">Cuando vienes?</span>
+  <h2 class="stitle reveal">Reservar cita</h2>
+  <div class="sline reveal"></div>
+  <div class="res-layout reveal">
+    <div>
+      <div class="step-label"><div class="step-num">1</div><span class="step-txt">Selecciona el dia</span></div>
+      <div class="cal-box">
+        <div class="cal-nav">
+          <button onclick="changeMonth(-1)">&#8592;</button>
+          <span id="cal-month"></span>
+          <button onclick="changeMonth(1)">&#8594;</button>
+        </div>
+        <div class="cal-hdr">
+          <div>L</div><div>M</div><div>X</div><div>J</div><div>V</div>
+          <div class="we">S</div><div class="we">D</div>
+        </div>
+        <div id="cal-grid"></div>
+        <div class="cal-legend">
+          <span style="display:flex;align-items:center;gap:4px"><i style="display:inline-block;width:8px;height:8px;background:var(--gold);border-radius:2px"></i>Disponible</span>
+          <span style="display:flex;align-items:center;gap:4px"><i style="display:inline-block;width:8px;height:8px;background:#1a1a1a;border:1px solid #333;border-radius:2px"></i>Ocupado</span>
+          <span style="display:flex;align-items:center;gap:4px"><i style="display:inline-block;width:8px;height:8px;background:rgba(201,168,76,.2);border:1px solid var(--gold);border-radius:2px"></i>Elegido</span>
+        </div>
+      </div>
+      <div id="hours-section" style="display:none">
+        <div class="step-label"><div class="step-num">2</div><span class="step-txt">Horarios disponibles</span></div>
+        <div class="hours-box">
+          <div class="hours-date" id="sel-date-lbl"></div>
+          <div id="hours-grid"></div>
+          <div id="loading-hours" style="text-align:center;color:var(--text-muted);font-size:.8rem;padding:1rem;display:none">Cargando horarios...</div>
+        </div>
+      </div>
+      <div class="horario-box">
+        <div class="slabel" style="margin-bottom:.8rem">Horario</div>
+        <div class="horario-row"><span style="color:var(--text-muted)">Lunes - Viernes</span><span style="color:var(--white)">12:30 - 19:30</span></div>
+        <div class="horario-row"><span style="color:var(--text-muted)">Sabado</span><span style="color:var(--white)">14:00 - 20:00</span></div>
+        <div class="horario-row"><span style="color:var(--text-muted)">Domingo</span><span style="color:var(--white)">14:00 - 20:00</span></div>
+      </div>
+    </div>
+    <div class="form-box">
+      <div class="form-title">Tus datos</div>
+      <div class="cita-resumen" id="cita-resumen">
+        <div class="cr-label">Tu cita</div>
+        <div class="cr-val" id="cita-val"></div>
+      </div>
+      <div class="form-group"><label>Nombre</label><input id="f-name" type="text" placeholder="Tu nombre completo"></div>
+      <div class="form-group"><label>Telefono</label><input id="f-phone" type="tel" placeholder="+34 600 000 000"></div>
+      <div class="form-group">
+        <label>Servicio</label>
+        <select id="f-service">
+          <option value="">Seleccionar...</option>
+          <option>Corte + Barba — 15€</option>
+          <option>Corte normal — 10€</option>
+          <option>Arreglo barba — 5€</option>
+          <option>Diseno / lineas — +3€</option>
+          <option>Ninos — 7€</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Nota (opcional)</label><textarea id="f-note" rows="3" placeholder="Algo que deba saber..."></textarea></div>
+      <button class="btn-wa" id="btn-reservar" onclick="sendReserva()">Confirmar Horario ✂</button>
+      <p class="btn-wa-note">Se abrira WhatsApp con tu reserva completa</p>
+    </div>
+  </div>
+
+  <div id="send-anim">
+    <div style="position:relative;width:180px;height:160px;display:flex;align-items:center;justify-content:center">
+      <svg id="env-svg" viewBox="0 0 160 130" width="160" height="130" style="overflow:visible">
+        <ellipse cx="80" cy="128" rx="55" ry="6" fill="rgba(201,168,76,.15)"/>
+        <rect x="5" y="40" width="150" height="85" rx="4" fill="#0d0d0d" stroke="#C9A84C" stroke-width="2.5"/>
+        <rect id="env-letter" x="25" y="55" width="110" height="55" rx="3" fill="#C9A84C" opacity="0"/>
+        <line id="tl1" x1="38" y1="68" x2="122" y2="68" stroke="#000" stroke-width="2" stroke-dasharray="84" stroke-dashoffset="84" opacity="0"/>
+        <line id="tl2" x1="38" y1="80" x2="110" y2="80" stroke="#000" stroke-width="2" stroke-dasharray="72" stroke-dashoffset="72" opacity="0"/>
+        <line id="tl3" x1="38" y1="92" x2="98" y2="92" stroke="#000" stroke-width="2" stroke-dasharray="60" stroke-dashoffset="60" opacity="0"/>
+        <polyline points="5,40 80,90 155,40" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linejoin="round"/>
+        <line x1="5" y1="125" x2="60" y2="82" stroke="#C9A84C" stroke-width="1.5" opacity="0.4"/>
+        <line x1="155" y1="125" x2="100" y2="82" stroke="#C9A84C" stroke-width="1.5" opacity="0.4"/>
+        <circle id="sp1" cx="140" cy="25" r="5" fill="#E8C96A" opacity="0"/>
+        <circle id="sp2" cx="155" cy="12" r="3" fill="#E8C96A" opacity="0"/>
+        <circle id="sp3" cx="148" cy="5" r="4" fill="#C9A84C" opacity="0"/>
+        <circle id="sp4" cx="130" cy="8" r="2.5" fill="#E8C96A" opacity="0"/>
+      </svg>
+    </div>
+    <div class="env-txt" id="env-txt">Reserva enviada!</div>
+    <div class="env-sub" id="env-sub">Abriendo WhatsApp...</div>
+  </div>
+</section>
+
+<section id="contacto">
+  <span class="slabel reveal">Encuentrame</span>
+  <h2 class="stitle reveal">Contacto</h2>
+  <div class="sline reveal"></div>
+  <div class="ct-layout">
+    <div class="reveal">
+      <div class="ct-item"><div class="ct-icon">📷</div><div class="ct-text"><h4>Instagram</h4><a href="https://www.instagram.com/chakibarber907/" target="_blank">@chakibarber907</a></div></div>
+      <div class="ct-item"><div class="ct-icon">🎬</div><div class="ct-text"><h4>TikTok</h4><a href="https://www.tiktok.com/@chakibarber907" target="_blank">@chakibarber907</a></div></div>
+      <div class="ct-item"><div class="ct-icon">📲</div><div class="ct-text"><h4>WhatsApp</h4><a href="https://wa.me/34698213370" target="_blank">+34 698 213 370</a></div></div>
+      <div class="ct-item"><div class="ct-icon">🔗</div><div class="ct-text"><h4>Reservas</h4><a href="https://link.me/elchakioficial" target="_blank">link.me/elchakioficial</a></div></div>
+      <div class="social-row">
+        <a href="https://www.instagram.com/chakibarber907/" target="_blank" class="social-btn">📷 Instagram</a>
+        <a href="https://www.tiktok.com/@chakibarber907" target="_blank" class="social-btn">🎬 TikTok</a>
+        <a href="https://wa.me/34698213370" target="_blank" class="social-btn">💬 WhatsApp</a>
+      </div>
+    </div>
+    <div class="reveal" style="background:var(--black-card);border:1px solid var(--black-border);height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.8rem">
+      <div style="font-size:2rem;color:var(--gold)">📍</div>
+      <div style="font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)">Ubicacion</div>
+      <p style="font-size:.82rem;text-align:center;max-width:220px;color:var(--text-muted)">Anade tu direccion en el panel admin</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo"><img src="img/logo.jpg" alt="Chaki Barber"></div>
+  <p class="foot-txt">© 2025 Chaki Barber · Todos los derechos reservados · <a href="admin.html" style="color:var(--text-muted);text-decoration:none;font-size:.7rem">Admin</a></p>
+  <div class="foot-ig"><a href="https://www.instagram.com/chakibarber907/" target="_blank">@chakibarber907</a></div>
+</footer>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB6v_KJeXlC_zhOtBIc_mDj1jCeeZ_Imjk",
+  authDomain: "chaki-barber.firebaseapp.com",
+  projectId: "chaki-barber",
+  storageBucket: "chaki-barber.firebasestorage.app",
+  messagingSenderId: "286139713696",
+  appId: "1:286139713696:web:e7e856fb2777d19e2d21c5",
+  databaseURL: "https://chaki-barber-default-rtdb.europe-west1.firebasedatabase.app/"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window._db = db;
+window._ref = ref;
+window._get = get;
+window._set = set;
+
+// Load media from Firebase (if admin updated them)
+const mediaRef = ref(db, 'media');
+onValue(mediaRef, (snap) => {
+  const data = snap.val();
+  if (!data) return;
+  if (data.logo) { document.getElementById('nav-logo-img').src = data.logo; }
+  if (data.heroImg) { document.getElementById('hero-img').src = data.heroImg; }
+  if (data.galMain) { document.getElementById('gal-main').src = data.galMain; }
+  if (data.gal0) { document.getElementById('gal-0').src = data.gal0; }
+  if (data.gal1) { document.getElementById('gal-1').src = data.gal1; }
+  if (data.gal2) { document.getElementById('gal-2').src = data.gal2; }
+  if (data.gal3) { document.getElementById('gal-3').src = data.gal3; }
+});
+
+// Expose DB functions for calendar
+window._loadBookings = async function(dateStr) {
+  const snap = await get(ref(db, 'bookings/' + dateStr));
+  return snap.val() || {};
+};
+window._saveBooking = async function(dateStr, hour, data) {
+  await set(ref(db, 'bookings/' + dateStr + '/' + hour.replace(':','')), data);
+};
+</script>
+
+<script>
+// SCROLL REVEAL
+var obs = new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('visible');obs.unobserve(x.target);}});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(el){obs.observe(el);});
+
+// VIDEOS
+function toggleVid(card){
+  var v=card.querySelector('video');
+  if(v.paused){
+    document.querySelectorAll('.vid-card').forEach(function(c){c.querySelector('video').pause();c.classList.remove('playing');c.classList.add('paused');});
+    v.play();card.classList.add('playing');card.classList.remove('paused');
+  } else {v.pause();card.classList.remove('playing');card.classList.add('paused');}
+}
+
+// CALENDARIO
+var WA="34698213370",selDay=null,selHour=null;
+var cM=new Date().getMonth(),cY=new Date().getFullYear();
+var MN=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+var WKHRS=["12:30","13:30","14:30","15:30","16:30","17:30","18:30","19:30"];
+var WEKHRS=["14:00","15:00","16:00","17:00","18:00","19:00","20:00"];
+function pad(n){return String(n).padStart(2,"0");}
+function dstr(y,m,d){return y+"-"+pad(m+1)+"-"+pad(d);}
+
+function renderCal(){
+  var g=document.getElementById("cal-grid");g.innerHTML="";
+  document.getElementById("cal-month").textContent=MN[cM]+" "+cY;
+  var fd=new Date(cY,cM,1).getDay();fd=fd===0?6:fd-1;
+  var dim=new Date(cY,cM+1,0).getDate();
+  var today=new Date();today.setHours(0,0,0,0);
+  for(var i=0;i<fd;i++){var e=document.createElement("div");e.className="rday empty";g.appendChild(e);}
+  for(var d=1;d<=dim;d++){
+    var dt=new Date(cY,cM,d);var dow=dt.getDay();
+    var ds=dstr(cY,cM,d);
+    var el=document.createElement("div");el.textContent=d;
+    var cls="rday";
+    if(dt<today)cls+=" past";
+    else cls+=" avail";
+    if(dt.toDateString()===today.toDateString())cls+=" tod";
+    if(selDay===ds)cls+=" sel";
+    el.className=cls;
+    if(cls.indexOf("avail")>-1)(function(s,o){el.onclick=function(){pickDay(s,o);};})(ds,dt);
+    g.appendChild(el);
+  }
+}
+
+async function pickDay(ds,dt){
+  selDay=ds;selHour=null;renderCal();
+  var dow=dt.getDay();var isW=dow===0||dow===6;
+  var sl=isW?WEKHRS:WKHRS;
+  var hg=document.getElementById("hours-grid");hg.innerHTML="";
+  var loading=document.getElementById("loading-hours");
+  loading.style.display="block";
+  document.getElementById("hours-section").style.display="block";
+  var lbl=dt.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});
+  lbl=lbl.charAt(0).toUpperCase()+lbl.slice(1);
+  document.getElementById("sel-date-lbl").textContent=lbl;
+
+  // Load real bookings from Firebase
+  var booked={};
+  if(window._loadBookings){
+    try{ booked=await window._loadBookings(ds); }catch(e){}
+  }
+  loading.style.display="none";
+
+  sl.forEach(function(h){
+    var key=h.replace(":","");
+    var isBusy=booked[key]&&booked[key].confirmed;
+    var b=document.createElement("button");
+    b.textContent=h;
+    b.className=isBusy?"rhr busy":"rhr free";
+    if(!isBusy)b.onclick=function(){pickHour(h,this);};
+    hg.appendChild(b);
+  });
+  document.getElementById("cita-resumen").style.display="none";
+}
+
+function pickHour(h,btn){
+  selHour=h;
+  document.querySelectorAll(".rhr").forEach(function(b){b.classList.remove("selh");});
+  btn.classList.add("selh");
+  var dt=new Date(selDay+"T12:00:00");
+  var lbl=dt.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"});
+  lbl=lbl.charAt(0).toUpperCase()+lbl.slice(1);
+  document.getElementById("cita-val").textContent=lbl+" a las "+h;
+  document.getElementById("cita-resumen").style.display="block";
+}
+
+function changeMonth(d){cM+=d;if(cM>11){cM=0;cY++;}if(cM<0){cM=11;cY--;}renderCal();}
+
+// ANIMACION SOBRE
+function playEnvAnim(cb){
+  var anim=document.getElementById("send-anim");
+  var svg=document.getElementById("env-svg");
+  var letter=document.getElementById("env-letter");
+  var tl1=document.getElementById("tl1"),tl2=document.getElementById("tl2"),tl3=document.getElementById("tl3");
+  var sp1=document.getElementById("sp1"),sp2=document.getElementById("sp2"),sp3=document.getElementById("sp3"),sp4=document.getElementById("sp4");
+  var txt=document.getElementById("env-txt"),sub=document.getElementById("env-sub");
+  svg.removeAttribute("style");svg.style.overflow="visible";svg.style.opacity="1";
+  letter.style.cssText="opacity:0;transform:translateY(0);transition:none";
+  [tl1,tl2,tl3].forEach(function(l){l.style.opacity="0";l.setAttribute("stroke-dashoffset",l.getAttribute("stroke-dasharray"));});
+  [sp1,sp2,sp3,sp4].forEach(function(s){s.style.cssText="opacity:0;transform:none";});
+  txt.style.cssText="font-family:var(--ff-d);font-size:2.4rem;color:var(--gold);font-weight:600;letter-spacing:.05em;text-align:center;opacity:0;transform:translateY(12px);transition:opacity .5s,transform .5s";
+  sub.style.cssText="font-size:.85rem;color:var(--text-muted);letter-spacing:.12em;opacity:0;transition:opacity .5s .3s";
+  anim.style.display="flex";
+  setTimeout(function(){letter.style.cssText="opacity:1;transform:translateY(-18px);transition:opacity .3s,transform .4s";},200);
+  setTimeout(function(){[tl1,tl2,tl3].forEach(function(l,i){setTimeout(function(){l.style.opacity="1";l.style.transition="stroke-dashoffset .3s ease";l.setAttribute("stroke-dashoffset","0");},i*100);});},450);
+  setTimeout(function(){letter.style.cssText="opacity:0;transform:translateY(0);transition:opacity .2s,transform .3s";[tl1,tl2,tl3].forEach(function(l){l.style.opacity="0";});},900);
+  setTimeout(function(){svg.style.transition="transform 1s ease-in,opacity 1s ease-in";svg.style.transform="translate(100px,-90px) rotate(-15deg)";svg.style.opacity="0";},1100);
+  setTimeout(function(){[sp1,sp2,sp3,sp4].forEach(function(s,i){setTimeout(function(){s.style.cssText="opacity:1;transition:none";setTimeout(function(){s.style.cssText="opacity:0;transform:scale(0);transition:opacity .4s,transform .4s";},250);},i*80);});},1200);
+  setTimeout(function(){txt.style.opacity="1";txt.style.transform="translateY(0)";sub.style.opacity="1";},1500);
+  setTimeout(function(){anim.style.display="none";if(cb)cb();},2800);
+}
+
+async function sendReserva(){
+  var nm=document.getElementById("f-name").value.trim();
+  var ph=document.getElementById("f-phone").value.trim();
+  var sv=document.getElementById("f-service").value;
+  var nt=document.getElementById("f-note").value.trim();
+  if(!nm||!ph||!sv||!selDay||!selHour){alert("Rellena todos los campos y elige dia y hora.");return;}
+
+  var btn=document.getElementById("btn-reservar");
+  btn.disabled=true;btn.textContent="Guardando...";
+
+  // Save to Firebase
+  if(window._saveBooking){
+    try{
+      await window._saveBooking(selDay,selHour,{nombre:nm,telefono:ph,servicio:sv,nota:nt,timestamp:Date.now(),confirmed:true});
+    }catch(e){console.log("Firebase error:",e);}
+  }
+
+  btn.disabled=false;btn.textContent="Confirmar Horario ✂";
+
+  var dt=new Date(selDay+"T12:00:00");
+  var dl=dt.toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  dl=dl.charAt(0).toUpperCase()+dl.slice(1);
+  var msg="NUEVA RESERVA CHAKI BARBER\n\nNombre: "+nm+"\nTelefono: "+ph+"\nServicio: "+sv+"\nDia: "+dl+"\nHora: "+selHour+(nt?"\nNota: "+nt:"");
+
+  playEnvAnim(function(){
+    window.open("https://wa.me/"+WA+"?text="+encodeURIComponent(msg),"_blank");
+    document.getElementById("f-name").value="";
+    document.getElementById("f-phone").value="";
+    document.getElementById("f-service").value="";
+    document.getElementById("f-note").value="";
+    document.getElementById("cita-resumen").style.display="none";
+    document.getElementById("hours-section").style.display="none";
+    selDay=null;selHour=null;renderCal();
+  });
+}
+
+window.addEventListener("DOMContentLoaded",function(){renderCal();});
+</script>
+</body>
+</html>
